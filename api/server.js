@@ -22,7 +22,7 @@ app.get('/', (req, res) => {
 });
 
 // Lab 2 (step 2.4): add the GET /healthz route here.
-
+app.get('/healthz', (req, res) => res.status(200).json({ status: 'ok' }));
 app.get('/api/todos', async (req, res) => {
   const { rows } = await pool.query(
     'SELECT id, title, done, created_at FROM todos ORDER BY id'
@@ -91,3 +91,7 @@ ensureSchema()
   });
 
 // Lab 2 (step 2.4): add the SIGTERM handler here.
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, closing the server');
+  server.close(() => pool.end().then(() => process.exit(0)));
+});
